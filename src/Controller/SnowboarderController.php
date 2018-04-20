@@ -60,7 +60,10 @@ class SnowboarderController extends Controller
 
 		if ($formSnowboarder->isSubmitted() && $formSnowboarder->isValid()) {
         	$Snowboarder = $formSnowboarder->getData();
-        	 
+        	//$formSnowboarder->getToken();
+        	
+        	//$formSnowboarder->sendmail()
+        	
         	$em = $this->getDoctrine()->getManager();
         	$em->persist($Snowboarder);
         	$em->flush();

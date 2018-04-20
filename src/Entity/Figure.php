@@ -37,6 +37,21 @@ class Figure
      * @ORM\Column(type="string", length=500, nullable=true)
      */
     private $image;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="figure")
+     */
+    private $secondaryImages;
+    
+    /**
+     * @Assert\Image(
+     *     minWidth = 200,
+     *     maxWidth = 400,
+     *     minHeight = 200,
+     *     maxHeight = 400
+     * )
+     */
+    private $attachment;
 
     /**
      * @ORM\Column(type="decimal", scale=2)
@@ -51,8 +66,20 @@ class Figure
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->secondaryImages = new ArrayCollection();
     }
 
+
+    
+    /**
+     * @return Collection|Image[]
+     */
+    public function getSecondaryImages()
+    {
+        return $this->secondaryImages;
+    }
+    
+    
     /**
      * @return Collection|Message[]
      */
@@ -105,6 +132,22 @@ class Figure
     public function setImage($image = 'http://localhost/~alexei/SnowTricks/public/images/S1.jpg')
     {
         $this->image = $image;
+    }
+    
+    
+    
+    
+    
+    
+    
+    public function getAttachment()
+    {
+        return $this->attachment;
+    }
+
+    public function setAttachment($attachment)
+    {
+        $this->attachment = $attachment;
     }
     
     

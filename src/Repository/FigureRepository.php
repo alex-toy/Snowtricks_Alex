@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Figure;
 use App\Entity\Message;
+use App\Entity\Image;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

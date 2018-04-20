@@ -24,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,7 +36,7 @@ use Doctrine\Common\Collections\Collection;
 use Twig\Environment;
 
 
-
+use App\Entity\Image;
 use App\Entity\Figure;
 use App\Entity\Message;
 
@@ -45,19 +46,16 @@ class FigureController extends Controller
     /**
      * @Route("/", name="index")
      */
-    public function index($numberLoads = 5, SessionInterface $session, Environment $twig){
-        
-        $session->set('foo', 'bar');
-
-    	   
+    public function index(Environment $twig){
+          
         $repository = $this->getDoctrine()->getRepository(Figure::class);
 		$figures = $repository->findAll();
-		//echo $figures[0]->getDescription();
 		
-		//echo sizeof(array_slice($figures, 0, $numberLoads-1));
-		
-
-        return $this->render('accueil/figures.html.twig', ['figures' => $figures] ); 
+        return $this->render('accueil/figures.html.twig', 
+		[
+         	'figures' => $figures,
+        	'numberFigures' => count($figures)
+        ]); 
     }
     
     
@@ -105,7 +103,6 @@ class FigureController extends Controller
 		$form = $this->createFormBuilder($message)
 		->add('contenu',     TextType::class)
 		->add('author',     TextType::class)
-		//->add('dateCreation',     DateType::class)
 		->add('save',      SubmitType::class)
 		->getForm();
 
@@ -154,6 +151,7 @@ class FigureController extends Controller
         	'10' => 10,
     	),
 		))
+		->add('attachment', FileType::class)
 		->add('save',      SubmitType::class)
         ->getForm();
 
@@ -161,18 +159,15 @@ class FigureController extends Controller
 
 		if ($form->isSubmitted() && $form->isValid()) {
         	$figure = $form->getData();
-        	$image = 
+        	//$figure->getImage->setLink(link????);
+        	
+        	
         	$figure->setImage('http://localhost/~alexei/SnowTricks/public/images/S1.jpg');
         	if($figure->getImage())
         	{
         		$figure->setImage('http://localhost/~alexei/SnowTricks/public/images/S1.jpg');
         	}
         	
-        	
-        	
-        	
-        	
-        	//echo 'figure->getImage : ' . $figure->getImage();
 
         	$em = $this->getDoctrine()->getManager();
         	$em->persist($figure);
@@ -180,9 +175,8 @@ class FigureController extends Controller
         	
         	$this->addFlash('messages', 'Vous venez de créer une figure!!' );
 
-        	//return $this->redirectToRoute('figure/' . $figure->getId());  Pourquoi ça ne marche pas???
+        	
         	return $this->redirectToRoute('index');
-        	//return $this->render('accueil/createfigure.html.twig', array( 'form' => $form->createView(), ));
     	}
 
     return $this->render('accueil/createfigure.html.twig', array(
@@ -219,10 +213,12 @@ class FigureController extends Controller
         	'10' => 10,
     	),
 		)) //difficulté
+		->add('secondaryImages',     TextType::class)
 		->add('save',      SubmitType::class)
         ->getForm();
 				
 		$form->handleRequest($request);
+		$image = new Image();
 
 		if ($form->isSubmitted() && $form->isValid()) {        	
         	$figure_form = $form->getData();
@@ -230,6 +226,10 @@ class FigureController extends Controller
         	$figure->setDescription($figure_form->getDescription());
         	$figure->setDescription($figure_form->getDescription());
         	$figure->setDifficulty($figure_form->getDifficulty());
+        	//$image->setLink($figure_form->getLink());
+        	//$image->setFigure($figure);
+        	
+        	
         	
         	$em->flush();
         	
@@ -263,33 +263,9 @@ class FigureController extends Controller
 	}
 	
 
-	/**
-     * @Route("/figures")
-     */
-    public function anchorAction(SessionInterface $session)
-    {
-        return $this->redirect($this->generateUrl('allfigures') . '#figure_min_conteneur');
-    }
+	
     
     
-    
-    
-    /**
-     * @Route("/addloads/{numberLoads}")
-     */
-    public function addloadsAction($numberLoads, SessionInterface $session)
-    {
-        $repository = $this->getDoctrine()->getRepository(Figure::class);
-		$figures = $repository->findAll();
-		
-
-        return $this->render('accueil/figures.html.twig', ['figures' => array_slice($figures, 0, $numberLoads)]); 
-    }
-
-
-
-
-
 
 	
    
